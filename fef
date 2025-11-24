@@ -1,0 +1,33 @@
+from robohead_controller_actions.main import *
+
+def run(robohead_controller: RoboheadController, cmds: str):
+    # Получаем путь к текущему скрипту (чтобы корректно ссылаться на медиа-файлы)
+    script_path = os.path.dirname(os.path.abspath(__file__)) + '/'
+
+    # 1) Вывод изображения 'smile.png' на экран робота
+    msg_img = PlayMediaRequest()
+    msg_img.is_blocking = 0        # не блокировать основной поток
+    msg_img.is_cycled = 0          # показывать изображение один раз
+    msg_img.path_to_file = script_path + 'smile.png'
+    robohead_controller.display_driver_srv_PlayMedia(msg_img)
+
+    # 2) Поворот шеи к источнику звука
+    msg_neck = NeckSetAngleRequest()
+    msg_neck.horizontal_angle = min(max(robohead_controller.respeaker_driver_doa_angle, -30), 30)
+    msg_neck.vertical_angle = 30
+    msg_neck.duration = 1          # время движения в секундах
+    msg_neck.is_blocking = 0       # не ждать окончания движения шеи
+    robohead_controller.neck_driver_srv_NeckSetAngle(msg_neck)
+
+    # 3) Разворот ушей в стороны для эффекта «улыбки»
+    msg_ears = EarsSetAngleRequest()
+    msg_ears.left_ear_angle = -90   # левое ухо влево
+    msg_ears.right_ear_angle = 90   # правое ухо вправо
+    robohead_controller.ears_driver_srv_EarsSetAngle(msg_ears)
+
+    # 4) Проигрывание звукового файла 'smile.mp3'
+    msg_audio = PlayAudioRequest()
+    msg_audio.path_to_file = script_path + 'smile.mp3'
+    msg_audio.is_blocking = 1      # дождаться завершения воспроизведения
+    msg_audio.is_cycled = 0        # воспроизвести один раз
+    robohead_controller.speakers_driver_srv_PlayAudio(msg_audio)
