@@ -143,3 +143,5 @@ ros2 topic echo /chatter
 ---
 
 Если хочешь, могу написать **подписчик**, **сервис**, **action**, или сделать «скелет» полноценного ROS 2 Jazzy проекта.
+# Запустите в отдельном терминале
+rostopic pub /robohead_controller/voice_recognizer_pocketsphinx/cmds_recognizer/commands std_msgs/String "data: 'улыбнись'"
